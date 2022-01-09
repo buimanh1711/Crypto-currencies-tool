@@ -4,11 +4,15 @@ const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fetcher = require("./axiosInstance");
+const database = require("./database");
 
 //initialize
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8756;
+
+//connect database
+database.connect();
 
 //middlewares
 app.use(cors({ credentials: true, origin: "*" }));
@@ -20,7 +24,7 @@ app.get("/list", async (req, res, next) => {
   try {
     const { query } = req;
     let start = 1,
-      limit = 100;
+      limit = 10;
 
     if (Number(query.start) > 0) start = query.start;
     if (Number(query.limit) > 0) limit = query.limit;
@@ -41,6 +45,8 @@ app.get("/list", async (req, res, next) => {
       toUsd: item.quotes[0]?.price,
     }));
 
+    console.log(originData)
+
     let promises = [];
 
     originData.forEach((coin) => {
@@ -56,6 +62,7 @@ app.get("/list", async (req, res, next) => {
     const contractResponse = await Promise.all(promises);
     const contracts = contractResponse.map((resp) => resp.data.platforms);
 
+    console.log(contracts);
     const result = originData.map((item, index) => {
       const contract = contracts[index] || [];
 
