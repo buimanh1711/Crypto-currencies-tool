@@ -1,14 +1,13 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import dotenv from "dotenv";
+const axios = require("axios");
+const dotenv = require("dotenv");
 dotenv.config();
 
-const chatServiceRequestor = axios.create({
-  baseURL: "https://pro-api.coinmarketcap.com/v1/tools",
-  timeout: 1000,
+const fetcher = axios.create({
+  baseURL: "https://api.coinmarketcap.com/data-api/v3/cryptocurrency",
   headers: { "X-CMC_PRO_API_KEY": "b5b154cd-ba36-4dd6-9406-fe3cca57a1f0" },
 });
 
-chatServiceRequestor.interceptors.request.use(
+fetcher.interceptors.request.use(
   function (config) {
     return config;
   },
@@ -17,7 +16,7 @@ chatServiceRequestor.interceptors.request.use(
   }
 );
 
-chatServiceRequestor.interceptors.response.use(
+fetcher.interceptors.response.use(
   function (response) {
     return response.data;
   },
@@ -26,4 +25,4 @@ chatServiceRequestor.interceptors.response.use(
   }
 );
 
-export default chatServiceRequestor;
+module.exports = fetcher;

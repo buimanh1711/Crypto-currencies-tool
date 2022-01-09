@@ -3,6 +3,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const fetcher = require("./axiosInstance");
 
 //initialize
 dotenv.config();
@@ -17,18 +18,21 @@ app.use(bodyParser.json());
 //routes
 app.get("/list", async (req, res, next) => {
   try {
-    const { params } = req;
-    let url =
-      "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1&limit=100&sortBy=market_cap&sortType=desc&convert=USD";
+    const { query } = req;
+    let start = 1,
+      limit = 100;
 
-    if (params.crypto_type) url += `&cryptoType=${params.crypto_type}`;
-    else url += `&cryptoType=all`;
+    if (Number(query.start) > 0) start = query.start;
+    if (Number(query.limit) > 0) limit = query.limit;
 
-    const cryptoResponse = await axios({
+    let url = `/listing?sortBy=market_cap&sortType=desc&convert=USD&start=${start}&limit=${limit}`;
+
+    const cryptoResponse = await fetcher({
       url: url,
       method: "GET",
     });
-    const cryptoList = cryptoResponse.data?.data?.cryptoCurrencyList;
+
+    const cryptoList = cryptoResponse.data?.cryptoCurrencyList;
     const originData = cryptoList.map((item) => ({
       id: item.id,
       name: item.name,
@@ -40,9 +44,9 @@ app.get("/list", async (req, res, next) => {
     let promises = [];
 
     originData.forEach((coin) => {
-      const detailEndpoint = `https://api.coinmarketcap.com/data-api/v3/cryptocurrency/detail?id=${coin.id}`;
+      const detailEndpoint = `/detail?id=${coin.id}`;
       promises.push(
-        axios({
+        fetcher({
           url: detailEndpoint,
           method: "GET",
         })
@@ -50,8 +54,7 @@ app.get("/list", async (req, res, next) => {
     });
 
     const contractResponse = await Promise.all(promises);
-    const responsesData = contractResponse.map((resp) => resp.data);
-    const contracts = responsesData.map((resp) => resp.data.platforms);
+    const contracts = contractResponse.map((resp) => resp.data.platforms);
 
     const result = originData.map((item, index) => {
       const contract = contracts[index] || [];
