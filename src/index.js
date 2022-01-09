@@ -3,6 +3,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const request = require("./axiosInstance");
 
 //initialize
 dotenv.config();
@@ -19,55 +20,55 @@ app.get("/list", async (req, res, next) => {
   try {
     const { params } = req;
     let url =
-      "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1&limit=100&sortBy=market_cap&sortType=desc&convert=USD&tagType=all&audited=false&aux=ath,atl,high24h,low24h,num_market_pairs,cmc_rank,date_added,max_supply,circulating_supply,total_supply,volume_7d,volume_30d,self_reported_circulating_supply,self_reported_market_cap";
+      "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=100&convert=USD";
 
-    if (params.crypto_type) url += `&cryptoType=${params.crypto_type}`;
-    else url += `&cryptoType=all`;
+    // if (params.crypto_type) url += `&cryptoType=${params.crypto_type}`;
+    // else url += `&cryptoType=all`;
 
-    const cryptoResponse = await axios({
+    const cryptoResponse = await request({
       url: url,
       method: "GET",
     });
-    const cryptoList = cryptoResponse.data?.data?.cryptoCurrencyList;
-    const originData = cryptoList.map((item) => ({
-      id: item.id,
-      name: item.name,
-      symbol: item.symbol,
-      slug: item.slug,
-      toUsd: item.quotes[0]?.price,
-    }));
 
-    let promises = [];
+    // const cryptoList = cryptoResponse.data?.cryptoCurrencyList;
+    // const originData = cryptoList.map((item) => ({
+    //   id: item.id,
+    //   name: item.name,
+    //   symbol: item.symbol,
+    //   slug: item.slug,
+    //   toUsd: item.quotes[0]?.price,
+    // }));
 
-    originData.forEach((coin) => {
-      const detailEndpoint = `https://api.coinmarketcap.com/data-api/v3/cryptocurrency/detail?id=${coin.id}`;
-      promises.push(
-        axios({
-          url: detailEndpoint,
-          method: "GET",
-        })
-      );
-    });
+    // let promises = [];
 
-    const contractResponse = await Promise.all(promises);
-    const responsesData = contractResponse.map((resp) => resp.data);
-    const contracts = responsesData.map((resp) => resp.data.platforms);
+    // originData.forEach((coin) => {
+    //   const detailEndpoint = `https://api.coinmarketcap.com/data-api/v3/cryptocurrency/detail?id=${coin.id}`;
+    //   promises.push(
+    //     request({
+    //       url: detailEndpoint,
+    //       method: "GET",
+    //     })
+    //   );
+    // });
 
-    const result = originData.map((item, index) => {
-      const contract = contracts[index] || [];
+    // const contractResponse = await Promise.all(promises);
+    // const contracts = contractResponse.map((resp) => resp.data.platforms);
 
-      return {
-        ...item,
-        contract: contract.map((item) => ({
-          id: item.contractId,
-          address: item.contractAddress,
-          platform: item.contractPlatform,
-        })),
-      };
-    });
+    // const result = originData.map((item, index) => {
+    //   const contract = contracts[index] || [];
+
+    //   return {
+    //     ...item,
+    //     contract: contract.map((item) => ({
+    //       id: item.contractId,
+    //       address: item.contractAddress,
+    //       platform: item.contractPlatform,
+    //     })),
+    //   };
+    // });
 
     res.json({
-      list: result,
+      list: cryptoResponse,
     });
   } catch (error) {
     console.log(error);
