@@ -45,8 +45,6 @@ app.get("/list", async (req, res, next) => {
       toUsd: item.quotes[0]?.price,
     }));
 
-    console.log(originData)
-
     let promises = [];
 
     originData.forEach((coin) => {
@@ -62,7 +60,6 @@ app.get("/list", async (req, res, next) => {
     const contractResponse = await Promise.all(promises);
     const contracts = contractResponse.map((resp) => resp.data.platforms);
 
-    console.log(contracts);
     const result = originData.map((item, index) => {
       const contract = contracts[index] || [];
 
