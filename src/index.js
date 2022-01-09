@@ -20,7 +20,7 @@ app.get("/list", async (req, res, next) => {
   try {
     const { params } = req;
     let url =
-      "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=100&convert=USD";
+      "/latest?start=1&limit=100&convert=USD";
 
     // if (params.crypto_type) url += `&cryptoType=${params.crypto_type}`;
     // else url += `&cryptoType=all`;
