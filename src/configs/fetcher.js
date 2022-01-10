@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const fetcher = axios.create({
-  baseURL: "https://api.coinmarketcap.com/data-api/v3/cryptocurrency",
+  baseURL: process.env.CMC_API_ENDPOINT,
   headers: { "X-CMC_PRO_API_KEY": "b5b154cd-ba36-4dd6-9406-fe3cca57a1f0" },
 });
 

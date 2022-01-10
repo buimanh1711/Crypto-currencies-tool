@@ -1,11 +1,10 @@
-const axios = require("axios");
 const express = require("express");
 const dotenv = require("dotenv");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const fetcher = require("./axiosInstance");
-const database = require("./database");
-const getAllData = require("./getAllData");
+const database = require("./configs/database");
+const getAllData = require("./utils/getAllData");
+const applyMiddleware = require("./middlewares");
+const getCurrencies = require("./api/getCurrencies");
+const cron = require("node-cron");
 
 //initialize
 dotenv.config();
@@ -16,17 +15,13 @@ const PORT = process.env.PORT || 8756;
 database.connect();
 
 //middlewares
-app.use(cors({ credentials: true, origin: "*" }));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+applyMiddleware(app);
+
+//cronjob
+cron.schedule("* * * * *", async () => getAllData());
 
 //routes
-(async function () {
-  console.log(await getAllData());
-})();
-app.get("/list", async (req, res, next) => {
-  res.send("hello");
-});
+app.get("/list", getCurrencies);
 
 app.listen(PORT, () => {
   console.log(`App is listen at ${PORT}`);

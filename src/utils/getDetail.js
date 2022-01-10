@@ -1,4 +1,4 @@
-const fetcher = require("./axiosInstance");
+const fetcher = require("../configs/fetcher");
 
 const getDetailData = (coin) => {
   return new Promise((resolve, reject) => {
