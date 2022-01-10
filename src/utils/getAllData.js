@@ -5,6 +5,7 @@ const CryptoCurrencyModel = require("../model/cryptoCurrencyModel");
 // dotenv.config();
 
 const getAllData = async () => {
+  console.log("START");
   try {
     let url = `/listing?sortBy=market_cap&sortType=desc&convert=USD&start=1&limit=${process.env.LIMIT}`;
 
@@ -44,7 +45,7 @@ const getAllData = async () => {
       }
     }
 
-    console.log("done");
+    console.log("DONE");
   } catch (error) {
     console.log(error);
   }

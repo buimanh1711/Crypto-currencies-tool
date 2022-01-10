@@ -18,7 +18,10 @@ database.connect();
 applyMiddleware(app);
 
 //cronjob
-cron.schedule("* * * * *", async () => getAllData());
+getAllData() //immediately execute
+cron.schedule("00 00 00 * * *", async () => getAllData(), {
+  scheduled: true,
+});
 
 //routes
 app.get("/list", getCurrencies);
