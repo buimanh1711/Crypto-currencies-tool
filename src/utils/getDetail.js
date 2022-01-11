@@ -26,7 +26,7 @@ const getDetailData = (coin) => {
           console.log(error);
           reject();
         });
-    }, 5000);
+    }, process.env.DELAY);
   });
 };
 
