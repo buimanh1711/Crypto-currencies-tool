@@ -19,9 +19,9 @@ applyMiddleware(app);
 
 //cronjob
 getAllData() //immediately execute
-// cron.schedule("00 00 00 * * *", async () => getAllData(), {
-//   scheduled: true,
-// });
+cron.schedule("00 00 00 * * *", async () => getAllData(), {
+  scheduled: true,
+});
 
 //routes
 app.get("/list", getCurrencies);

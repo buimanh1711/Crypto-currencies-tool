@@ -24,12 +24,9 @@ const getAllData = async () => {
     }));
 
     const apiResponse = [];
-    let index = 0;
     for (const coin of originData) {
       try {
         const data = await getDetailData(coin);
-        console.log(data)
-        console.log("saving");
         await CryptoCurrencyModel.findOneAndUpdate(
           {
             crypto_id: data.crypto_id,
@@ -41,8 +38,6 @@ const getAllData = async () => {
         );
 
         apiResponse.push(data);
-        index++;
-        console.log(index);
       } catch (error) {
         console.log(error);
       }

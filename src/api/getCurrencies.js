@@ -8,7 +8,6 @@ const getCurrencies = async (req, res, next) => {
   if (query.platform_id) filters["chain.platform_id"] = query.platform_id;
   if (query.chain_id) filters["chain.chain_id"] = query.chain_id;
 
-  console.log(filters)
   if (query.limit > 0) limit = query.limit;
 
   const response = await CryptoCurrencyModel.find(
